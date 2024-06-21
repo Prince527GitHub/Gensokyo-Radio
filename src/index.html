@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Music Player</title>
+  <link rel="stylesheet" href="./css/bootstrap.min.css">
+  <link rel="stylesheet" href="./css/bootstrap-icons.min.css">
+  <script src="./js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="./css/style.min.css">
+</head>
+
+<body>
+  <div id="volume-dropdown" class="dropdown top-left">
+    <i class="bi bi-volume-up" data-bs-toggle="dropdown" aria-expanded="false"></i>
+    <ul id="volume-inner-dropdown" class="dropdown-menu">
+      <div class="container">
+        <input id="volume-control" class="slider-width" type="range" min="0" max="100" step="1" oninput="audioVolume(this.value)" onchange="audioVolume(this.value)">
+        <div id="volume-value" class="slider-value">100</div>
+      </div>
+    </ul>
+  </div>
+
+  <i onclick="theme()" class="bi top-right" id="btn-theme"></i>
+
+  <img id="image" class="circle" src="" height="300" width="300">
+
+  <h2 class="title" id="title"></h2>
+
+  <p id="info"></p>
+
+  <table class="full-width" id="audio-progress">
+    <tr>
+      <td>
+        0:00
+      </td>
+      <td>
+        <input class="full-width" id="audio-progress-control" type="range" min="0" max="100" value="100">
+      </td>
+      <td id="audio-progress-value">
+        0:00
+      </td>
+    </tr>
+  </table>
+
+  <table class="bottom full-width">
+    <tr>
+      <td id="btn-control">
+        <button onclick="audioControl()" class="btn-control">
+          <i class="bi bi-pause" id="icon-control"></i>
+        </button>
+      </td>
+    </tr>
+  </table>
+
+  <script src="./js/script.js"></script>
+</body>
+
+</html>
