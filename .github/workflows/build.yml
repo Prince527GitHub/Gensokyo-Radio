@@ -14,6 +14,11 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        if: matrix.os == 'macos-latest'
+        with:
+          python-version: '3.10'
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -21,10 +26,6 @@ jobs:
 
       - name: Install Packages
         run: npm i
-
-      - name: Mac only Packages
-        if: matrix.os == 'macos-latest'
-        run: pip install setuptools
 
       - name: Build App
         run: npm run make
