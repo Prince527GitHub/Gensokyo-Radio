@@ -36,10 +36,6 @@ module.exports = {
       },
     },
     {
-      name: '@electron-forge/maker-flatpak',
-      config: {}
-    },
-    {
       name: '@electron-forge/maker-dmg',
       config: {
         icon: './src/img/logo.icns',
