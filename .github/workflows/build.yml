@@ -24,7 +24,7 @@ jobs:
 
       - name: Mac only Packages
         if: matrix.os == 'macos-latest'
-        run: npm i distutils
+        run: pip install setuptools
 
       - name: Build App
         run: npm run make
