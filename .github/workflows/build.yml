@@ -19,8 +19,14 @@ jobs:
         with:
           node-version: 'lts/*'
 
+      - name: Install Packages
+        run: npm i
+
       - name: Build App
-        uses: heliomarpm/action-electron-builder@v2.1
+        run: npm run make
+
+      - name: Upload App
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.github_token }}
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          name: ${{ matrix.os }}
+          path: ./make
