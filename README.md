@@ -1,5 +1,9 @@
-# Gensokyo Radio App
+<p align="center">
+  <a href="https://github.com/ForkPrince/Gensokyo-Radio">
+    <img src="https://api.serversmp.xyz/upload/6676e18d7036ecb33d7162c8.webp" width="40%">
+  </a>
+</p>
 
-A simple app to play music from Gensokyo Radio.
+<h3 align="center">Gensokyo Radio</h3>
 
-![screenshot](https://api.serversmp.xyz/upload/6675dd6b7036ecb33d715f1d.webp)
+<p align="center">An app to listen to Gensokyo Radio with Discord RPC support.</p>

@@ -1,0 +1,75 @@
+:root {
+  --progress-bg: #cccccc50;
+  --progress-fg: #eeeeee;
+}
+
+img {
+  justify-content: center;
+  border-radius: .5rem;
+  align-items: center;
+  text-align: center;
+  display: flex;
+
+  margin: 0 auto;
+  margin-top: 1rem;
+}
+
+.progress-container {
+  background-color: var(--progress-bg);
+  border-radius: 5rem;
+  overflow: hidden;
+  margin: 0 auto;
+  height: 10px;
+  width: 90%;
+}
+
+#progress {
+  transition: width .4s ease;
+  background-color: var(--progress-fg);
+  border-radius: 5rem;
+  height: 100%;
+  width: 0;
+}
+
+.button-group {
+  justify-content: center;
+  padding-bottom: 1rem;
+  align-items: center;
+  position: absolute;
+  display: flex;
+  width: 100%;
+  gap: .5rem;
+  bottom: 0;
+}
+
+h2,
+p {
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  text-align: center;
+}
+
+h2 {
+  padding-bottom: 0;
+  margin-bottom: 0;
+
+  margin-right: .25rem;
+  margin-left: .25rem;
+}
+
+p {
+  padding-top: 0;
+  margin-top: 0;
+
+  padding-bottom: 1rem;
+  margin-bottom: 0;
+
+  margin-right: .25rem;
+  margin-left: .25rem;
+}
+
+input[type="range"] {
+  height: 1rem;
+  width: 70vw;
+}

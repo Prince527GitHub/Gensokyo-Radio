@@ -1,143 +1,117 @@
-const info = document.getElementById('info');
-const title = document.getElementById('title');
-const img = document.getElementById('image');
-const volumeInner = document.getElementById('volume-inner-dropdown');
-const progressBar = document.getElementById('audio-progress-control');
-const audioMax = document.getElementById('audio-progress-value');
-const btnTheme = document.getElementById('btn-theme');
-const volumeSlider = document.getElementById("volume-control");
-const root = document.documentElement;
+feather.replace();
 
-if (!localStorage.getItem('theme')) localStorage.setItem('theme', 'dark');
+let level = localStorage.getItem("level") || .5;
 
-if (localStorage.getItem('theme') === "dark") {
-    btnTheme.classList.add("bi-moon");
-    root.style.setProperty("--bg-color", "#1A1818");
-    root.style.setProperty("--text-color", "#ffffff");
-    volumeInner.classList.add("dark");
-    color = '#fff';
-    colorClass = 'dark';
-} else {
-    btnTheme.classList.add("bi-sun");
-    root.style.setProperty("--bg-color", "#ffffff");
-    root.style.setProperty("--text-color", "#000000");
-}
+const cover = document.getElementById("cover");
+const title = document.getElementById("title");
+const author = document.getElementById("author");
+const progress = document.getElementById("progress");
 
-let audio = null;
-let volume = 100;
+const audio = new Audio("https://stream.gensokyoradio.net/3");
 
-async function audioLoad() {
-    try {
-        title.innerHTML = "";
-        info.innerHTML = "";
-        audio = new Audio("https://stream.gensokyoradio.net/3");
-        audio.play();
-        volumeSlider.value = volume;
-        audioVolume(volume);
-        audioProgress();
-    } catch (err) {
-        console.error(err);
-        alert("An error has occurred while trying to play the audio.");
-    }
+audio.play();
 
-    img.style.imageRendering = "pixelated";
-    img.src = "./img/undefined.png";
-    title.innerHTML = "loading...";
-    info.innerHTML = "loading...";
-
-    getCurrent();
-};
-
-audioLoad();
+audio.volume = level;
 
 async function getCurrent() {
-    const current = await (await fetch("https://gensokyoradio.net/api/station/playing/")).json();
+    const current = await (await fetch("https://gensokyoradio.net/api/station/playing")).json();
 
-    img.style.imageRendering = "auto";
-    img.src = `https://gensokyoradio.net/images/albums/500/${current.MISC.ALBUMART}`;
-    title.innerHTML = current.SONGINFO.TITLE;
-    info.innerHTML = current.SONGINFO.ARTIST;
+    return current;
 }
 
-async function audioControl() {
-    if (audio === null) return;
+let time = {
+    duration: null,
+    played: null
+}
 
-    const icon = document.getElementById("icon-control");
+async function setSong() {
+    const song = await getCurrent();
 
-    if (audio.paused) {
-        audio.play();
-        icon.classList.remove("bi-play");
-        icon.classList.add("bi-pause");
+    cover.src = song.MISC.ALBUMART ? `https://gensokyoradio.net/images/albums/500/${song.MISC.ALBUMART}` : "./img/undefined.png";
+    title.innerText = song.SONGINFO.TITLE;
+    author.innerText = song.SONGINFO.ARTIST;
+
+    progress.style.width = `${song.SONGTIMES.PLAYED / song.SONGTIMES.DURATION * 100}%`;
+
+    time.duration = song.SONGTIMES.DURATION;
+    time.played = song.SONGTIMES.PLAYED;
+}
+
+setSong();
+
+setInterval(async () => {
+    time.played++;
+
+    progress.style.width = `${time.played / time.duration * 100}%`;
+
+    if (time.played >= time.duration) await setSong();
+}, 1000);
+
+const control = document.getElementById("control");
+const volume = document.getElementById("volume");
+const theme = document.getElementById("theme");
+
+volume.addEventListener("click", () => {
+    openModal("modal");
+});
+
+control.addEventListener("click", () => {
+    if (audio.volume === 0) {
+        control.innerHTML = `<i data-feather="pause"></i>`;
+        audio.volume = level;
     } else {
-        audio.pause();
-        icon.classList.remove("bi-pause");
-        icon.classList.add("bi-play");
+        control.innerHTML = `<i data-feather="play"></i>`;
+        audio.volume = 0;
     }
-}
 
-async function audioVolume(val) {
-    if (audio === null) return;
+    feather.replace();
+});
 
-    const sliderValue = document.getElementById("volume-value");
+let style = localStorage.getItem("style") || "dark";
+theme.addEventListener("click", () => {
+    const root = document.documentElement;
 
-    audio.volume = val / 100;
-    const valPercent = (volumeSlider.value / volumeSlider.max)*100;
-
-    volumeSlider.value = valPercent;
-    sliderValue.innerHTML = volumeSlider.value;
-}
-
-async function audioProgress() {
-    if (audio === null) return;
-
-    progressBar.disabled = true;
-
-    await updateProgress();
-
-    setInterval(async() => {
-        progressBar.value++;
-
-        if (progressBar.value === progressBar.max) {
-            progressBar.value = 0;
-            getCurrent();
-            updateProgress();
-        }
-    }, 1000);
-}
-
-async function updateProgress() {
-    const current = await (await fetch("https://gensokyoradio.net/api/station/playing/")).json();
-
-    progressBar.max = current.SONGTIMES.DURATION;
-    progressBar.value = current.SONGTIMES.PLAYED;
-
-    audioMax.innerHTML = convertTime(current.SONGTIMES.DURATION);
-}
-
-function convertTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-
-    let remaining = seconds % 60;
-
-    remaining = remaining.toString().padStart(2, '0');
-
-    return `${minutes}:${remaining}`;
-}
-
-async function theme() {
-    if (localStorage.getItem('theme') === "dark") {
-        btnTheme.classList.remove("bi-moon");
-        btnTheme.classList.add("bi-sun");
-        root.style.setProperty("--bg-color", "#ffffff");
-        root.style.setProperty("--text-color", "#000000");
-        volumeInner.classList.remove("dark");
-        localStorage.setItem("theme", "light");
-    } else {
-        btnTheme.classList.remove("bi-sun");
-        btnTheme.classList.add("bi-moon");
-        root.style.setProperty("--bg-color", "#1A1818");
+    if (style === "light") {
+        root.style.setProperty("--background-color", "#26292a");
+        root.style.setProperty("--forground-color", "#1e2122");
         root.style.setProperty("--text-color", "#ffffff");
-        volumeInner.classList.add("dark");
-        localStorage.setItem("theme", "dark");
+        root.style.setProperty("--progress-bg", "#cccccc50");
+        root.style.setProperty("--progress-fg", "#eeeeee");
+
+        theme.innerHTML = `<i data-feather="moon"></i>`;
+        style = "dark";
+
+        localStorage.setItem("style", "dark");
+    } else {
+        root.style.setProperty("--background-color", "#ffffff");
+        root.style.setProperty("--forground-color", "#cccccc");
+        root.style.setProperty("--text-color", "#000000");
+        root.style.setProperty("--progress-bg", "#24242450");
+        root.style.setProperty("--progress-fg", "#000000");
+
+        theme.innerHTML = `<i data-feather="sun"></i>`;
+        style = "light";
+
+        localStorage.setItem("style", "light");
     }
-}
+
+    feather.replace();
+});
+
+const modal = document.getElementById("modal");
+
+modal.addEventListener("click", (event) => event.target === modal ? closeModal("modal") : null);
+
+document.addEventListener("keydown", (event) => event.key === "Escape" ? closeModal("modal") : null);
+
+const range = document.getElementById("range");
+
+range.value = level * 100;
+
+range.addEventListener("change", (event) => {
+    level = range.value / 100;
+
+    audio.volume = level;
+
+    localStorage.setItem("level", level);
+});

@@ -1,59 +1,39 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Music Player</title>
-  <link rel="stylesheet" href="./css/bootstrap.min.css">
-  <link rel="stylesheet" href="./css/bootstrap-icons.min.css">
-  <script src="./js/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="./css/style.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="./css/library.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Gensokyo Radio</title>
 </head>
-
 <body>
-  <div id="volume-dropdown" class="dropdown top-left">
-    <i class="bi bi-volume-up" data-bs-toggle="dropdown" aria-expanded="false"></i>
-    <ul id="volume-inner-dropdown" class="dropdown-menu">
-      <div class="container">
-        <input id="volume-control" class="slider-width" type="range" min="0" max="100" step="1" oninput="audioVolume(this.value)" onchange="audioVolume(this.value)">
-        <div id="volume-value" class="slider-value">100</div>
-      </div>
-    </ul>
-  </div>
 
-  <i onclick="theme()" class="bi top-right" id="btn-theme"></i>
+    <img id="cover" src="./img/undefined.png" height="300" width="300">
 
-  <img id="image" class="circle" src="" height="300" width="300">
+    <h2 id="title">Loading...</h2>
 
-  <h2 class="title" id="title"></h2>
+    <p id="author">Loading...</p>
 
-  <p id="info"></p>
+    <div class="progress-container">
+        <div id="progress"></div>
+    </div>
 
-  <table class="full-width" id="audio-progress">
-    <tr>
-      <td>
-        0:00
-      </td>
-      <td>
-        <input class="full-width" id="audio-progress-control" type="range" min="0" max="100" value="100">
-      </td>
-      <td id="audio-progress-value">
-        0:00
-      </td>
-    </tr>
-  </table>
+    <div class="button-group">
+        <button class="button button-primary" id="volume"><i data-feather="volume-2"></i></button>
+        <button class="button button-primary" id="control"><i data-feather="pause"></i></button>
+        <button class="button button-primary" id="theme"><i data-feather="moon"></i></button> 
+    </div>
 
-  <table class="bottom full-width">
-    <tr>
-      <td id="btn-control">
-        <button onclick="audioControl()" class="btn-control">
-          <i class="bi bi-pause" id="icon-control"></i>
-        </button>
-      </td>
-    </tr>
-  </table>
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <input type="range" name="range" id="range" min="0" max="100" step="1" value="100">
+        </div>
+    </div>
 
-  <script src="./js/script.js"></script>
+    <script src="./js/library.js"></script>
+    <script src="./js/script.js"></script>
+
 </body>
-
 </html>

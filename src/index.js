@@ -1,96 +1,99 @@
 const { app, BrowserWindow, Tray, Menu } = require("electron");
-const axios = require("axios");
 const path = require("path");
 
+// Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
-    app.quit();
+  app.quit();
 }
-
-let mainWindow = null;
-let tray = null;
 
 const createWindow = () => {
-    mainWindow = new BrowserWindow({
-        width: 362,
-        height: 587,
-        webPreferences: {
-            nodeIntegration: true,
-            enableRemoteModule: true
-        },
-        autoHideMenuBar: true,
-        resizable: false,
-        fullscreenable: false,
-        maximizable: false
-    })
+  // Create the browser window.
+  const mainWindow = new BrowserWindow({
+    width: 362,
+    height: 587,
+    autoHideMenuBar: true,
+    resizable: false,
+    fullscreenable: false,
+    maximizable: false
+  });
 
-    mainWindow.setIcon(path.join(__dirname, "img/logo.png"));
-    mainWindow.loadFile(path.join(__dirname, "index.html"));
+  const icon = path.join(__dirname, "img/logo.png");
 
-    mainWindow.on("ready-to-show", () => mainWindow.show());
+  // and load the index.html of the app.
+  mainWindow.setIcon(icon);
+  mainWindow.loadFile(path.join(__dirname, "index.html"));
 
-    tray = new Tray(path.join(__dirname, "img/logo.png"));
-    const contextMenu = Menu.buildFromTemplate([
-        {
-            label: "Show/Hide",
-            click: () => mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
-        },
-        {
-            label: "Quit",
-            click: () => app.quit()
-        }
-    ]);
+  const tray = new Tray(icon);
 
-    tray.setToolTip("Music Player");
-    tray.setContextMenu(contextMenu);
+  tray.setToolTip("Gensokyo Radio");
+  tray.setContextMenu(Menu.buildFromTemplate([
+    {
+        label: "Show/Hide",
+        click: () => mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
+    },
+    {
+        label: "Quit",
+        click: () => app.quit()
+    }
+  ]));
 
-    tray.on("click", () => mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show());
+  tray.on("click", () => mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show());
 };
 
-app.on("ready", createWindow);
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.whenReady().then(() => {
+  createWindow();
 
-app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") {
-        app.quit();
-    }
-});
-
-app.on("activate", () => {
+  // On OS X it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
+      createWindow();
     }
+  });
 });
 
-app.on("ready", discordRPC);
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});
 
-async function discordRPC() {
-    const DiscordRPC = require("discord-rpc");
+// In this file you can include the rest of your app's specific main process
+// code. You can also put them in separate files and import them here.
+const { Client } = require("@xhayper/discord-rpc");
 
-    const rpc = new DiscordRPC.Client({ transport: "ipc" });
+app.on("ready", () => {
+  const client = new Client({ clientId: "1253772057926303804" });
 
-    rpc.login({ clientId: "1253772057926303804" }).catch(console.error);
+  async function setActivity() {
+    const song = await (await fetch("https://gensokyoradio.net/api/station/playing/")).json();
 
-    async function setActivity() {
-        if (!rpc || !mainWindow) return;
-
-        const current = (await axios("https://gensokyoradio.net/api/station/playing/")).data;
-
-        rpc.setActivity({
-            details: current.SONGINFO.TITLE,
-            state: current.SONGINFO.ARTIST,
-            startTimestamp: Date.now(),
-            endTimestamp: new Date(Date.now() + (current.SONGTIMES.REMAINING * 1000)),
-            largeImageKey: `https://gensokyoradio.net/images/albums/500/${current.MISC.ALBUMART}`,
-            largeImageText: current.SONGINFO.ALBUM,
-            smallImageKey: "large_logo",
-            smallImageText: "Gensokyo Radio",
-        });
-    }
-
-    rpc.on("ready", () => {
-        setActivity();
-
-        setInterval(() => {
-            setActivity();
-        }, 15e3);
+    client.user?.setActivity({
+      details: song.SONGINFO.TITLE,
+      state: song.SONGINFO.ARTIST,
+      startTimestamp: Date.now(),
+      endTimestamp: new Date(Date.now() + (song.SONGTIMES.REMAINING * 1000)),
+      largeImageKey: song.MISC.ALBUMART ? `https://gensokyoradio.net/images/albums/500/${song.MISC.ALBUMART}` : "undefined",
+      largeImageText: song.SONGINFO.ALBUM,
+      smallImageKey: "logo",
+      smallImageText: "Gensokyo Radio",
+      type: 2
     });
-}
+  }
+
+  client.on("ready", () => {
+    setActivity();
+
+    setInterval(() => {
+        setActivity();
+    }, 15e3);
+  });
+
+  client.login();
+});
