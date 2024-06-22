@@ -8,7 +8,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - name: Check out Git repository
@@ -21,6 +21,10 @@ jobs:
 
       - name: Install Packages
         run: npm i
+
+      - name: Mac only Packages
+        if: matrix.os == 'macos-latest'
+        run: npm i distutils
 
       - name: Build App
         run: npm run make
