@@ -77,8 +77,8 @@ app.on("ready", () => {
     client.user?.setActivity({
       details: song.SONGINFO.TITLE,
       state: song.SONGINFO.ARTIST,
-      startTimestamp: Date.now(),
-      endTimestamp: new Date(Date.now() + (song.SONGTIMES.REMAINING * 1000)),
+      startTimestamp: song.SONGTIMES.SONGSTART,
+      endTimestamp: song.SONGTIMES.SONGEND,
       largeImageKey: song.MISC.ALBUMART ? `https://gensokyoradio.net/images/albums/500/${song.MISC.ALBUMART}` : "undefined",
       largeImageText: song.SONGINFO.ALBUM,
       smallImageKey: "logo",
