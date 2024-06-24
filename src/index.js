@@ -83,7 +83,7 @@ app.on("ready", () => {
       largeImageText: song.SONGINFO.ALBUM,
       smallImageKey: "logo",
       smallImageText: "Gensokyo Radio",
-      type: 2
+      type: ActivityType.Listening
     });
   }
 
