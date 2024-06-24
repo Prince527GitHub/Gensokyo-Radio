@@ -67,7 +67,7 @@ app.on("window-all-closed", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 const { Client } = require("@xhayper/discord-rpc");
-const { ActivityType } = require("discord-api-types/v10");
+// const { ActivityType } = require("discord-api-types/v10");
 
 app.on("ready", () => {
   const client = new Client({ clientId: "1253772057926303804" });
@@ -84,7 +84,7 @@ app.on("ready", () => {
       largeImageText: song.SONGINFO.ALBUM,
       smallImageKey: "logo",
       smallImageText: "Gensokyo Radio",
-      type: ActivityType.Listening
+      type: "Listening"
     });
   }
 
