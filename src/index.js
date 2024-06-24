@@ -1,3 +1,4 @@
+import { ActivityType } from "discord-api-types/v10";
 const { app, BrowserWindow, Tray, Menu } = require("electron");
 const path = require("path");
 
