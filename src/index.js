@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu } = require("electron");
+const { app, BrowserWindow, Tray, Menu, ipcMain } = require("electron");
 const path = require("path");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -14,7 +14,10 @@ const createWindow = () => {
     autoHideMenuBar: true,
     resizable: false,
     fullscreenable: false,
-    maximizable: false
+    maximizable: false,
+    webPreferences: {
+      preload: path.join(__dirname, "js/preload.js")
+    }
   });
 
   const icon = path.join(__dirname, "img/logo.png");
@@ -67,11 +70,16 @@ app.on("window-all-closed", () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 const { Client } = require("@xhayper/discord-rpc");
+let isPaused = false;
 
 app.on("ready", () => {
+  ipcMain.on("set-paused", (event, state) => isPaused = state);
+
   const client = new Client({ clientId: "1253772057926303804" });
 
   async function setActivity() {
+    if (isPaused) return client.user?.clearActivity();
+
     const song = await (await fetch("https://gensokyoradio.net/api/station/playing/")).json();
 
     client.user?.setActivity({

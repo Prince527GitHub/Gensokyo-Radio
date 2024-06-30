@@ -7,14 +7,14 @@ const title = document.getElementById("title");
 const author = document.getElementById("author");
 const progress = document.getElementById("progress");
 
-const audio = new Audio("https://stream.gensokyoradio.net/3");
+const audio = new Audio("https://stream.gensokyoradio.net/3/");
 
 audio.play();
 
 audio.volume = level;
 
 async function getCurrent() {
-    const current = await (await fetch("https://gensokyoradio.net/api/station/playing")).json();
+    const current = await (await fetch("https://gensokyoradio.net/api/station/playing/")).json();
 
     return current;
 }
@@ -59,9 +59,13 @@ control.addEventListener("click", () => {
     if (audio.volume === 0) {
         control.innerHTML = `<i data-feather="pause"></i>`;
         audio.volume = level;
+
+        window.electron.setPaused(false); 
     } else {
         control.innerHTML = `<i data-feather="play"></i>`;
         audio.volume = 0;
+
+        window.electron.setPaused(true); 
     }
 
     feather.replace();
