@@ -1,3 +1,6 @@
+> [!IMPORTANT]  
+> This player is deprecated, please use the [Re:Lunatic Player](https://github.com/Prince527GitHub/Re-Lunatic-Player) instead.
+
 <p align="center">
   <a href="https://github.com/ForkPrince/Gensokyo-Radio">
     <img src="https://api.serversmp.xyz/upload/6676e18d7036ecb33d7162c8.webp" width="40%">
